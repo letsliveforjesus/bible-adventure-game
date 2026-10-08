@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Bible Power-Up Adventure - Acts 8:26-40</title>
+
+  <style>
+    :root {
+      --navy: #11265b;
+      --blue: #2b78d0;
+      --sky: #8ed9ff;
+      --gold: #ffd83d;
+      --green: #24a148;
+      --dark-green: #17722f;
+      --purple: #7b4bb7;
+      --pink: #e85a9a;
+      --orange: #f28c28;
+      --red: #d94949;
+      --cream: #fffbed;
+      --ink: #18213b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 15%, rgba(255,255,255,.9) 0 2%, transparent 2.5%),
+        radial-gradient(circle at 85% 10%, rgba(255,255,255,.85) 0 2%, transparent 2.5%),
+        radial-gradient(circle at 75% 26%, rgba(255,255,255,.75) 0 3%, transparent 3.5%),
+        linear-gradient(#69c8f8 0%, #b9ebff 48%, #fff1a5 100%);
+      padding: 16px;
+    }
+
+    .app {
+      width: min(1050px, 100%);
+      margin: 0 auto;
+    }
+
+    .game-shell {
+      overflow: hidden;
+      background: rgba(255,255,255,.95);
+      border: 6px solid white;
+      border-radius: 28px;
+      box-shadow: 0 14px 35px rgba(17, 38, 91, .28);
+    }
+
+    .banner {
+      color: white;
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--navy), var(--purple));
+    }
+
+    .banner h1 {
+      margin: 0;
+      color: var(--gold);
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+    }
+
+    .banner p {
+      margin: 8px 0 0;
+      font-size: clamp(.95rem, 2.5vw, 1.18rem);
+      font-weight: bold;
+    }
+
+    .screen {
+      padding: 25px;
+    }
+
+    /* Start Screen */
+    #startScreen {
+      text-align: center;
+      padding: 48px 20px;
+    }
+
+    .hero-icons {
+      font-size: clamp(3.5rem, 10vw, 6rem);
+      margin-bottom: 10px;
+      animation: floatUp 2s ease-in-out infinite;
+    }
+
+    #startScreen h2 {
+      color: var(--navy);
+      font-size: clamp(1.7rem, 4vw, 2.4rem);
+      margin: 8px 0 12px;
+    }
+
+    #startScreen p {
+      max-width: 650px;
+      margin: 0 auto 25px;
+      font-size: 1.16rem;
+      line-height: 1.55;
+    }
+
+    .big-button,
+    .small-button {
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      transition: transform .15s, filter .15s;
+    }
+
+    .big-button:hover,
+    .small-button:hover:not(:disabled),
+    .answer:hover:not(:disabled) {
+      transform: translateY(-3px);
+      filter: brightness(1.07);
+    }
+
+    .big-button {
+      background: var(--green);
+      padding: 16px 30px;
+      font-size: 1.35rem;
+      box-shadow: 0 5px 0 var(--dark-green);
+    }
+
+    .big-button:active,
+    .small-button:active {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+
+    /* Game Screen */
+    #gameScreen {
+      display: none;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .status-card {
+      text-align: center;
+      background: var(--cream);
+      border: 3px solid #f2d45b;
+      border-radius: 15px;
+      padding: 10px 6px;
+      font-weight: bold;
+      font-size: .95rem;
+    }
+
+    .status-card strong {
+      display: block;
+      color: var(--navy);
+      font-size: clamp(1.25rem, 4vw, 1.8rem);
+      margin-top: 4px;
+    }
+
+    /* Progress Path */
+    .progress-area {
+      border-radius: 20px;
+      padding: 16px;
+      background: linear-gradient(135deg, #75cef7, #d4f4ff);
+      border: 4px solid white;
+      margin-bottom: 18px;
+    }
+
+    .progress-area h2 {
+      margin: 0 0 12px;
+      text-align: center;
+      color: var(--navy);
+      font-size: 1.3rem;
+    }
+
+    #progressPath {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .path-step {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 4px solid white;
+      background: #c4d4de;
+      color: #5e6f7c;
+      font-size: 1.55rem;
+      font-weight: bold;
+      box-shadow: 0 3px 0 rgba(0,0,0,.12);
+      position: relative;
+    }
+
+    .path-step.complete {
+      background: var(--green);
+      color: white;
+    }
+
+    .path-step.current {
+      background: var(--gold);
+      color: var(--navy);
+      animation: pulse 1.1s infinite;
+    }
+
+    .path-step.final-step {
+      background: var(--purple);
+      color: white;
+    }
+
+    /* Power-Up Shelf */
+    .powerup-box {
+      background: linear-gradient(135deg, var(--navy), #3151a5);
+      color: white;
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .powerup-box h2 {
+      margin: 0 0 12px;
+      text-align: center;
+      color: var(--gold);
+      font-size: 1.3rem;
+    }
+
+    .powerup-items {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .powerup-item {
+      min-height: 86px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.16);
+      border: 2px solid rgba(255,255,255,.22);
+      text-align: center;
+      padding: 8px 4px;
+      font-size: .82rem;
+      font-weight: bold;
+    }
+
+    .powerup-icon {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 3px;
+    }
+
+    .powerup-count {
+      color: var(--gold);
+      font-size: 1.15rem;
+    }
+
+    /* Question Card */
+    .question-card {
+      background: #fffdf6;
+      border: 5px solid var(--gold);
+      border-radius: 22px;
+      padding: 25px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.13);
+    }
+
+    .question-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .question-number {
+      background: var(--navy);
+      color: var(--gold);
+      padding: 8px 13px;
+      border-radius: 999px;
+      font-weight: bold;
+    }
+
+    .small-button {
+      background: var(--purple);
+      padding: 10px 13px;
+      font-size: .95rem;
+    }
+
+    .small-button:disabled {
+      cursor: not-allowed;
+      opacity: .42;
+    }
+
+    #questionText {
+      color: var(--navy);
+      font-size: clamp(1.45rem, 4vw, 2.05rem);
+      line-height: 1.3;
+      margin: 20px 0;
+    }
+
+    #answers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .answer {
+      min-height: 78px;
+      color: white;
+      border: none;
+      border-radius: 15px;
+      padding: 13px;
+      cursor: pointer;
+      text-align: left;
+      font-weight: bold;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      transition: transform .15s, filter .15s;
+    }
+
+    .answer-a {
+      background: #dfbd00;
+      color: var(--ink);
+    }
+
+    .answer-b {
+      background: var(--orange);
+    }
+
+    .answer-c {
+      background: var(--purple);
+    }
+
+    .answer-d {
+      background: var(--blue);
+    }
+
+    .answer:disabled {
+      cursor: default;
+    }
+
+    .answer.hidden-by-hint {
+      visibility: hidden;
+    }
+
+    .answer.correct {
+      background: var(--green) !important;
+      color: white !important;
+      outline: 4px solid #a7f4af;
+    }
+
+    .answer.wrong {
+      background: var(--red) !important;
+      color: white !important;
+      opacity: .78;
+    }
+
+    .answer-mark {
+      float: right;
+      font-size: 1.55rem;
+    }
+
+    #feedback {
+      min-height: 68px;
+      margin-top: 18px;
+      padding: 13px;
+      text-align: center;
+      border-radius: 14px;
+      font-size: clamp(1.05rem, 3vw, 1.3rem);
+      font-weight: bold;
+    }
+
+    .feedback-correct {
+      background: #d9f8de;
+      border: 3px solid #70ce81;
+      color: #145c27;
+    }
+
+    .feedback-wrong {
+      background: #ffe0dc;
+      border: 3px solid #eb9b91;
+      color: #7b271f;
+    }
+
+    .feedback-powerup {
+      background: #e8ddff;
+      border: 3px solid #ae89e8;
+      color: #452575;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    #continueBtn {
+      display: none;
+      background: var(--green);
+    }
+
+    #musicBtn {
+      background: #4e3b92;
+    }
+
+    /* Power-Up Pop-Up */
+    #powerupPopup {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      background: rgba(10, 23, 57, .62);
+      padding: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .popup-card {
+      width: min(470px, 100%);
+      text-align: center;
+      background: white;
+      border: 6px solid var(--gold);
+      border-radius: 26px;
+      padding: 28px 20px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.28);
+      animation: popupIn .35s ease-out;
+    }
+
+    .popup-card .popup-icon {
+      font-size: 4.8rem;
+      margin-bottom: 8px;
+    }
+
+    .popup-card h2 {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: 2rem;
+    }
+
+    .popup-card p {
+      font-size: 1.15rem;
+      line-height: 1.45;
+      margin: 0 0 20px;
+    }
+
+    /* Finish Screen */
+    #finishScreen {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .champion-icon {
+      font-size: clamp(4rem, 11vw, 7rem);
+      animation: floatUp 2s ease-in-out infinite;
+    }
+
+    #finishScreen h2 {
+      color: var(--navy);
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin: 10px 0;
+    }
+
+    #finalMessage {
+      max-width: 650px;
+      margin: 0 auto 24px;
+      line-height: 1.5;
+      font-size: 1.2rem;
+    }
+
+    #celebration {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .confetti {
+      position: absolute;
+      top: -40px;
+      animation: fall 2.1s ease-in forwards;
+      font-size: 2rem;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
+
+    @keyframes floatUp {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes popupIn {
+      from { transform: scale(.55); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-30px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh) rotate(540deg);
+        opacity: 0;
+      }
+    }
+/* Animated Bible Story Pictures */
+.story-scene {
+  min-height: 185px;
+  margin: 18px 0;
+  border: 4px solid #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(#78cff7 0%, #d5f4ff 65%, #efd083 66%, #d6a54d 100%);
+  box-shadow: inset 0 -8px 0 rgba(0, 0, 0, .08);
+}
+
+.scene-title {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  background: rgba(17, 38, 91, .85);
+  color: white;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: .9rem;
+  font-weight: bold;
+  z-index: 5;
+}
+
+.scene-sun {
+  position: absolute;
+  right: 22px;
+  top: 22px;
+  font-size: 3.3rem;
+  animation: sunGlow 2s ease-in-out infinite;
+}
+
+.scene-cloud {
+  position: absolute;
+  font-size: 2.8rem;
+  opacity: .9;
+  animation: cloudMove 8s linear infinite;
+}
+
+.cloud-one {
+  top: 38px;
+  left: -25px;
+}
+
+.cloud-two {
+  top: 80px;
+  right: -20px;
+  animation-delay: -4s;
+}
+
+.scene-character {
+  position: absolute;
+  bottom: 20px;
+  font-size: 5.5rem;
+  z-index: 3;
+}
+
+.philip {
+  left: 18%;
+  animation: walkBounce 1s ease-in-out infinite;
+}
+
+.ethiopian {
+  right: 17%;
+  animation: gentleBounce 1.4s ease-in-out infinite;
+}
+
+.scene-angel {
+  position: absolute;
+  left: 9%;
+  top: 34px;
+  font-size: 4.7rem;
+  z-index: 4;
+  animation: angelFloat 2s ease-in-out infinite;
+}
+
+.scene-scroll {
+  position: absolute;
+  right: 14%;
+  bottom: 24px;
+  font-size: 4.3rem;
+  z-index: 4;
+  animation: scrollOpen 1.8s ease-in-out infinite;
+}
+
+.scene-bible {
+  position: absolute;
+  left: 39%;
+  bottom: 29px;
+  font-size: 4.7rem;
+  z-index: 4;
+  animation: bibleBounce 1.6s ease-in-out infinite;
+}
+
+.scene-chariot {
+  position: absolute;
+  bottom: 15px;
+  left: 30%;
+  font-size: 6.2rem;
+  z-index: 3;
+  animation: chariotRide 3.5s ease-in-out infinite;
+}
+
+.scene-water {
+  position: absolute;
+  bottom: -25px;
+  width: 125%;
+  height: 90px;
+  background: #36aeea;
+  border-radius: 50% 50% 0 0;
+  z-index: 2;
+  animation: waterWave 2s ease-in-out infinite;
+}
+
+.scene-water::before,
+.scene-water::after {
+  content: "";
+  position: absolute;
+  width: 55%;
+  height: 35px;
+  border-radius: 50%;
+  border-top: 6px solid #c7f2ff;
+  opacity: .8;
+}
+
+.scene-water::before {
+  left: 10%;
+  top: 22px;
+}
+
+.scene-water::after {
+  right: 8%;
+  top: 42px;
+}
+
+.scene-sparkles {
+  position: absolute;
+  top: 52px;
+  left: 42%;
+  font-size: 2rem;
+  animation: sparkle 1.4s ease-in-out infinite;
+}
+
+.scene-jesus {
+  position: absolute;
+  bottom: 22px;
+  left: 39%;
+  font-size: 5.5rem;
+  z-index: 4;
+  animation: gentleBounce 1.5s ease-in-out infinite;
+}
+
+.scene-speech {
+  position: absolute;
+  top: 60px;
+  left: 49%;
+  transform: translateX(-50%);
+  background: white;
+  color: #11265b;
+  border: 3px solid #11265b;
+  border-radius: 18px;
+  padding: 9px 14px;
+  font-size: 1rem;
+  font-weight: bold;
+  z-index: 6;
+  animation: speechPop 2s ease-in-out infinite;
+}
+
+.scene-rainbow {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 5.3rem;
+  animation: rainbowGrow 2s ease-in-out infinite;
+}
+
+.scene-joy {
+  position: absolute;
+  bottom: 22px;
+  left: 42%;
+  font-size: 5.8rem;
+  z-index: 5;
+  animation: joyDance 1s ease-in-out infinite;
+}
+
+@keyframes angelFloat {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-13px) rotate(4deg); }
+}
+
+@keyframes chariotRide {
+  0%, 100% { transform: translateX(-22px); }
+  50% { transform: translateX(28px); }
+}
+
+@keyframes walkBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes gentleBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes scrollOpen {
+  0%, 100% { transform: scale(1) rotate(-4deg); }
+  50% { transform: scale(1.14) rotate(4deg); }
+}
+
+@keyframes bibleBounce {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-9px) rotate(3deg); }
+}
+
+@keyframes waterWave {
+  0%, 100% { transform: translateX(-2%) rotate(-1deg); }
+  50% { transform: translateX(2%) rotate(1deg); }
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(.8) rotate(0deg); opacity: .65; }
+  50% { transform: scale(1.3) rotate(18deg); opacity: 1; }
+}
+
+@keyframes speechPop {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.08); }
+}
+
+@keyframes rainbowGrow {
+  0%, 100% { transform: translateX(-50%) scale(.9); }
+  50% { transform: translateX(-50%) scale(1.08); }
+}
+
+@keyframes joyDance {
+  0%, 100% { transform: translateY(0) rotate(-8deg); }
+  50% { transform: translateY(-13px) rotate(8deg); }
+}
+
+@keyframes cloudMove {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(80px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes sunGlow {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.12); filter: brightness(1.25); }
+}
+
+@media (max-width: 700px) {
+  .story-scene {
+    min-height: 150px;
+  }
+
+  .scene-character,
+  .scene-jesus,
+  .scene-chariot {
+    font-size: 4.2rem;
+  }
+
+  .scene-angel {
+    font-size: 3.8rem;
+  }
+
+  .scene-scroll,
+  .scene-bible {
+    font-size: 3.5rem;
+  }
+
+  .scene-speech {
+    font-size: .78rem;
+    padding: 7px 9px;
+  }
+}
+    @media (max-width: 700px) {
+      body {
+        padding: 7px;
+      }
+
+      .screen {
+        padding: 16px;
+      }
+
+      .status-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .powerup-items {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      #answers {
+        grid-template-columns: 1fr;
+      }
+
+      .path-step {
+        width: 43px;
+        height: 43px;
+        font-size: 1.22rem;
+      }
+    }
+	/* Joy Rocket Animation */
+.joy-rocket {
+  position: fixed;
+  left: -120px;
+  bottom: -80px;
+  z-index: 50;
+  pointer-events: none;
+  font-size: 5rem;
+  animation: rocketLaunch 3s ease-in forwards;
+}
+
+.joy-rocket::after {
+  content: "✨ 🔥 ✨";
+  position: absolute;
+  right: 70px;
+  top: 30px;
+  white-space: nowrap;
+  font-size: 1.7rem;
+  transform: rotate(22deg);
+}
+
+@keyframes rocketLaunch {
+  0% {
+    transform: translate(0, 0) rotate(35deg) scale(.7);
+    opacity: 1;
+  }
+
+  55% {
+    transform: translate(55vw, -55vh) rotate(35deg) scale(1.15);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(115vw, -115vh) rotate(35deg) scale(.75);
+    opacity: 0;
+  }
+}
+  </style>
+</head>
+
+<body>
+  <!-- Optional sound files. The game works even if these files are absent. -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="assets/background2SoundQuiz.mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="correctSound" preload="auto">
+    <source src="assets/rightSound.mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="wrongSound" preload="auto">
+    <source src="assets/wrongSound.mp3" type="audio/mpeg">
+  </audio>
+
+  <div id="celebration" aria-hidden="true"></div>
+
+  <!-- Power-Up Reward Pop-Up -->
+  <div id="powerupPopup">
+    <div class="popup-card">
+      <div id="popupIcon" class="popup-icon">⭐</div>
+      <h2 id="popupTitle">Power Up!</h2>
+      <p id="popupMessage"></p>
+      <button id="closePopupBtn" class="big-button">Awesome!</button>
+    </div>
+  </div>
+
+  <main class="app">
+    <section class="game-shell">
+      <header class="banner">
+        <h1>⚡ Bible Power-Up Adventure ⚡</h1>
+        <p>God Sends Philip to the Ethiopian Man — Acts 8:26–40</p>
+      </header>
+
+      <!-- Start Screen -->
+      <section id="startScreen" class="screen">
+        <div class="hero-icons">📖 🚀 ⭐</div>
+        <h2>Get Ready to Power Up!</h2>
+        <p>
+          Answer Bible questions, collect special power-ups, earn bright stars,
+          and become a Bible Adventure Champion!
+        </p>
+        <button id="startBtn" class="big-button">Start Adventure!</button>
+      </section>
+
+      <!-- Game Screen -->
+      <section id="gameScreen" class="screen">
+
+        <div class="status-row">
+          <div class="status-card">
+            Points
+            <strong id="scoreDisplay">0</strong>
+          </div>
+
+          <div class="status-card">
+            Stars
+            <strong id="starDisplay">0</strong>
+          </div>
+
+          <div class="status-card">
+            Streak
+            <strong id="streakDisplay">0</strong>
+          </div>
+
+          <div class="status-card">
+            Question
+            <strong><span id="questionDisplay">1</span> / 10</strong>
+          </div>
+        </div>
+
+        <section class="progress-area">
+          <h2>🗺️ Your Adventure Path</h2>
+          <div id="progressPath"></div>
+        </section>
+
+        <section class="powerup-box">
+          <h2>⚡ Your Power-Up Collection ⚡</h2>
+
+          <div class="powerup-items">
+            <div class="powerup-item">
+              <span class="powerup-icon">🔍</span>
+              Helper Hints
+              <div class="powerup-count" id="hintCount">0</div>
+            </div>
+
+            <div class="powerup-item">
+              <span class="powerup-icon">🛡️</span>
+              Faith Shields
+              <div class="powerup-count" id="shieldCount">0</div>
+            </div>
+
+            <div class="powerup-item">
+              <span class="powerup-icon">🌈</span>
+              Rainbow Bonuses
+              <div class="powerup-count" id="rainbowCount">0</div>
+            </div>
+
+            <div class="powerup-item">
+              <span class="powerup-icon">🚀</span>
+              Joy Rockets
+              <div class="powerup-count" id="rocketCount">0</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="question-card">
+          <div class="question-top">
+            <span id="questionNumber" class="question-number">Question 1</span>
+
+            <div>
+              <button id="readBtn" class="small-button">🔈 Read It to Me</button>
+              <button id="hintBtn" class="small-button">🔍 Use Hint</button>
+            </div>
+          </div>
+
+          <div id="scene" class="story-scene" aria-label="Bible story picture"></div>
+
+<h2 id="questionText"></h2>
+
+          <div id="answers"></div>
+
+          <div id="feedback" aria-live="polite"></div>
+
+          <div class="controls">
+            <button id="continueBtn" class="small-button">Next Adventure Step ▶</button>
+            <button id="musicBtn" class="small-button">🔊 Play Music</button>
+          </div>
+        </section>
+      </section>
+
+      <!-- Finish Screen -->
+      <section id="finishScreen" class="screen">
+        <div class="champion-icon">🏆</div>
+        <h2>Bible Adventure Champion!</h2>
+        <p id="finalMessage"></p>
+
+        <p style="font-size:1.15rem; line-height:1.5;">
+          Philip obeyed God, helped the Ethiopian man understand God's Word,
+          and shared the good news about Jesus.
+        </p>
+
+        <button id="playAgainBtn" class="big-button">Play Again!</button>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const quiz = [
+      {
+        question: "Who told Philip to go to the desert road?",
+        answers: ["Peter", "An angel of the Lord", "The Ethiopian man", "Simon"],
+        correct: 1
+      },
+      {
+        question: "Where did Philip go after the angel spoke to him?",
+        answers: ["To the desert road", "To a castle", "To a boat", "To Rome"],
+        correct: 0
+      },
+      {
+        question: "Who was riding in a chariot?",
+        answers: ["Peter", "A king", "An Ethiopian man", "Stephen"],
+        correct: 2
+      },
+      {
+        question: "What was the Ethiopian man doing in his chariot?",
+        answers: ["Sleeping", "Reading a scroll", "Singing", "Eating bread"],
+        correct: 1
+      },
+      {
+        question: "What book of the Bible was the Ethiopian man reading?",
+        answers: ["Genesis", "Psalms", "Isaiah", "Matthew"],
+        correct: 2
+      },
+      {
+        question: "Philip helped the man understand the Scripture was about whom?",
+        answers: ["Jesus", "Moses", "David", "Abraham"],
+        correct: 0
+      },
+      {
+        question: "What did Philip ask the Ethiopian man?",
+        answers: [
+          "Do you understand what you are reading?",
+          "Can I have your chariot?",
+          "Where is your home?",
+          "Can I have your scroll?"
+        ],
+        correct: 0
+      },
+      {
+        question: "Who helped the Ethiopian man understand God's Word?",
+        answers: ["Philip", "A soldier", "Peter", "A farmer"],
+        correct: 0
+      },
+      {
+        question: "What did the Ethiopian man see that made him ask about baptism?",
+        answers: ["A mountain", "A city", "Some water", "A rainbow"],
+        correct: 2
+      },
+      {
+        question: "How did the Ethiopian man feel after he was baptized?",
+        answers: ["Afraid", "Happy and rejoicing", "Angry", "Sleepy"],
+        correct: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let stars = 0;
+    let streak = 0;
+    let hints = 0;
+    let shields = 0;
+    let rainbows = 0;
+    let rockets = 0;
+
+    let answered = false;
+    let hintUsedThisQuestion = false;
+    let musicOn = false;
+
+    const startScreen = document.getElementById("startScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const finishScreen = document.getElementById("finishScreen");
+
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const starDisplay = document.getElementById("starDisplay");
+    const streakDisplay = document.getElementById("streakDisplay");
+    const questionDisplay = document.getElementById("questionDisplay");
+
+    const hintCount = document.getElementById("hintCount");
+    const shieldCount = document.getElementById("shieldCount");
+    const rainbowCount = document.getElementById("rainbowCount");
+    const rocketCount = document.getElementById("rocketCount");
+
+    const progressPath = document.getElementById("progressPath");
+    const questionNumber = document.getElementById("questionNumber");
+    const questionText = document.getElementById("questionText");
+    const answersContainer = document.getElementById("answers");
+    const feedback = document.getElementById("feedback");
+
+    const hintBtn = document.getElementById("hintBtn");
+    const continueBtn = document.getElementById("continueBtn");
+
+    const bgMusic = document.getElementById("bgMusic");
+    const correctSound = document.getElementById("correctSound");
+    const wrongSound = document.getElementById("wrongSound");
+
+    function safePlay(audio) {
+      audio.currentTime = 0;
+
+      audio.play().catch(() => {
+        // Game continues if a sound file is not available
+        // or the browser blocks audio playback.
+      });
+    }
+
+    function updateDashboard() {
+      scoreDisplay.textContent = score;
+      starDisplay.textContent = stars;
+      streakDisplay.textContent = streak;
+      questionDisplay.textContent = Math.min(currentQuestion + 1, quiz.length);
+
+      hintCount.textContent = hints;
+      shieldCount.textContent = shields;
+      rainbowCount.textContent = rainbows;
+      rocketCount.textContent = rockets;
+
+      hintBtn.disabled = hints === 0 || answered || hintUsedThisQuestion;
+
+      buildProgressPath();
+    }
+
+    function buildProgressPath() {
+      progressPath.innerHTML = "";
+
+      for (let i = 0; i < quiz.length; i++) {
+        const step = document.createElement("div");
+        step.className = "path-step";
+
+        if (i < currentQuestion) {
+          step.classList.add("complete");
+          step.textContent = "✓";
+        } else if (i === currentQuestion && currentQuestion < quiz.length) {
+          step.classList.add("current");
+          step.textContent = "📖";
+        } else {
+          step.textContent = i + 1;
+        }
+
+        if (i === quiz.length - 1) {
+          step.classList.add("final-step");
+
+          if (i > currentQuestion) {
+            step.textContent = "🏆";
+          }
+        }
+
+        progressPath.appendChild(step);
+      }
+    }
+function showStoryScene(questionIndex) {
+  const scene = document.getElementById("scene");
+
+  const basicSky = `
+    <div class="scene-sun">☀️</div>
+    <div class="scene-cloud cloud-one">☁️</div>
+    <div class="scene-cloud cloud-two">☁️</div>
+  `;
+
+  const scenes = [
+
+    /* Question 1 — Angel sends Philip */
+    `
+      ${basicSky}
+      <div class="scene-title">An Angel Gives Philip a Mission</div>
+      <div class="scene-angel">👼</div>
+      <div class="scene-character philip">🧔🏽</div>
+      <div class="scene-speech">“Go to the desert road!”</div>
+    `,
+
+    /* Question 2 — Philip goes to the road */
+    `
+      ${basicSky}
+      <div class="scene-title">Philip Obeys God</div>
+      <div class="scene-character philip">🧔🏽</div>
+      <div class="scene-chariot">🐎🛞</div>
+      <div class="scene-sparkles">✨</div>
+    `,
+
+    /* Question 3 — Ethiopian man in chariot */
+    `
+      ${basicSky}
+      <div class="scene-title">A Traveler in a Chariot</div>
+      <div class="scene-chariot">🐎🛞</div>
+      <div class="scene-character ethiopian">👳🏾</div>
+      <div class="scene-scroll">📜</div>
+    `,
+
+    /* Question 4 — Reading scroll */
+    `
+      ${basicSky}
+      <div class="scene-title">Reading God's Word</div>
+      <div class="scene-chariot">🐎🛞</div>
+      <div class="scene-scroll">📜</div>
+      <div class="scene-sparkles">✨</div>
+    `,
+
+    /* Question 5 — Book of Isaiah */
+    `
+      ${basicSky}
+      <div class="scene-title">The Scroll of Isaiah</div>
+      <div class="scene-bible">📖</div>
+      <div class="scene-scroll">📜</div>
+      <div class="scene-sparkles">⭐</div>
+    `,
+
+    /* Question 6 — Scripture points to Jesus */
+    `
+      ${basicSky}
+      <div class="scene-title">Philip Teaches About Jesus</div>
+      <div class="scene-character philip">🧔🏽</div>
+      <div class="scene-jesus">👑</div>
+      <div class="scene-sparkles">✨</div>
+    `,
+
+    /* Question 7 — Philip asks a question */
+    `
+      ${basicSky}
+      <div class="scene-title">Philip Helps the Traveler</div>
+      <div class="scene-character philip">🧔🏽</div>
+      <div class="scene-character ethiopian">👳🏾</div>
+      <div class="scene-speech">“Do you understand?”</div>
+      <div class="scene-scroll">📜</div>
+    `,
+
+    /* Question 8 — Learning God’s Word */
+    `
+      ${basicSky}
+      <div class="scene-title">Learning Together</div>
+      <div class="scene-character philip">🧔🏽</div>
+      <div class="scene-character ethiopian">👳🏾</div>
+      <div class="scene-bible">📖</div>
+      <div class="scene-sparkles">✨</div>
+    `,
+
+    /* Question 9 — Baptism water */
+    `
+      ${basicSky}
+      <div class="scene-title">They Came to Some Water</div>
+      <div class="scene-character philip">🧔🏽</div>
+      <div class="scene-character ethiopian">👳🏾</div>
+      <div class="scene-water"></div>
+      <div class="scene-sparkles">💧</div>
+    `,
+
+    /* Question 10 — Rejoicing */
+    `
+      ${basicSky}
+      <div class="scene-title">The Ethiopian Man Rejoiced!</div>
+      <div class="scene-rainbow">🌈</div>
+      <div class="scene-joy">🙌🏾</div>
+      <div class="scene-sparkles">🎉✨</div>
+    `
+  ];
+
+  scene.innerHTML = scenes[questionIndex];
+}
+    function loadQuestion() {
+      if (currentQuestion >= quiz.length) {
+        showFinishScreen();
+        return;
+      }
+
+      answered = false;
+      hintUsedThisQuestion = false;
+      feedback.textContent = "";
+      feedback.className = "";
+      continueBtn.style.display = "none";
+
+      const item = quiz[currentQuestion];
+	  showStoryScene(currentQuestion);
+
+      questionNumber.textContent = `Adventure Question ${currentQuestion + 1}`;
+      questionText.textContent = item.question;
+
+      answersContainer.innerHTML = "";
+
+      const letters = ["A", "B", "C", "D"];
+
+      item.answers.forEach((answer, index) => {
+        const button = document.createElement("button");
+
+        button.className = `answer answer-${letters[index].toLowerCase()}`;
+        button.innerHTML = `<strong>${letters[index]}.</strong> ${answer}`;
+
+        button.addEventListener("click", () => {
+          checkAnswer(index, button);
+        });
+
+        answersContainer.appendChild(button);
+      });
+
+      updateDashboard();
+    }
+
+    function checkAnswer(answerIndex, selectedButton) {
+      if (answered) return;
+
+      const item = quiz[currentQuestion];
+      const answerButtons = document.querySelectorAll(".answer");
+
+      if (answerIndex === item.correct) {
+        answered = true;
+
+        answerButtons.forEach(button => {
+          button.disabled = true;
+        });
+
+        selectedButton.classList.add("correct");
+        selectedButton.innerHTML += '<span class="answer-mark">✓</span>';
+
+        score += 100;
+        stars++;
+        streak++;
+
+        safePlay(correctSound);
+        launchConfetti();
+
+        const reward = earnPowerUp();
+
+        feedback.className = "feedback-correct";
+        feedback.textContent = `Correct! You earned 100 points and a bright star! ⭐`;
+
+        updateDashboard();
+
+        setTimeout(() => {
+          showPowerUpPopup(reward);
+        }, 450);
+
+        continueBtn.style.display = "inline-block";
+      } else {
+        selectedButton.classList.add("wrong");
+        selectedButton.disabled = true;
+        selectedButton.innerHTML += '<span class="answer-mark">✕</span>';
+
+        safePlay(wrongSound);
+
+        if (shields > 0) {
+          shields--;
+
+          feedback.className = "feedback-powerup";
+          feedback.textContent =
+            "Your Shield of Faith saved you! 🛡️ Try another answer.";
+
+          updateDashboard();
+          return;
+        }
+
+        answered = true;
+        streak = 0;
+
+        answerButtons.forEach(button => {
+          button.disabled = true;
+        });
+
+        const correctButton = answerButtons[item.correct];
+        correctButton.classList.add("correct");
+        correctButton.innerHTML += '<span class="answer-mark">✓</span>';
+
+        feedback.className = "feedback-wrong";
+        feedback.textContent =
+          `Nice try! The correct answer is: ${item.answers[item.correct]}.`;
+
+        updateDashboard();
+        continueBtn.style.display = "inline-block";
+      }
+    }
+function launchJoyRocket() {
+  const rocket = document.createElement("div");
+
+  rocket.className = "joy-rocket";
+  rocket.textContent = "🚀";
+
+  document.body.appendChild(rocket);
+
+  setTimeout(() => {
+    rocket.remove();
+  }, 3100);
+}
+    function earnPowerUp() {
+      const rewards = [
+        {
+          type: "hint",
+          icon: "🔍",
+          title: "Helper Hint Power-Up!",
+          message: "You earned a Helper Hint! Use it to hide two wrong answers.",
+          apply: () => { hints++; }
+        },
+        {
+          type: "shield",
+          icon: "🛡️",
+          title: "Shield of Faith Power-Up!",
+          message: "You earned a Shield! If you miss an answer, you can try again.",
+          apply: () => { shields++; }
+        },
+        {
+          type: "rainbow",
+          icon: "🌈",
+          title: "Rainbow Bonus!",
+          message: "A rainbow appeared! You earned 50 bonus points!",
+          apply: () => {
+            rainbows++;
+            score += 50;
+          }
+        },
+        {
+  type: "rocket",
+  icon: "🚀",
+  title: "Joy Rocket Power-Up!",
+  message: "Blast off! Watch your Joy Rocket fly across the sky!",
+  apply: () => {
+    rockets++;
+    launchJoyRocket();
+  }
+},
+        {
+          type: "wisdom",
+          icon: "📖",
+          title: "Bible Wisdom Unlocked!",
+          message: "God helps us understand His Word when we ask and listen.",
+          apply: () => {}
+        }
+      ];
+
+      const reward = rewards[Math.floor(Math.random() * rewards.length)];
+      reward.apply();
+
+      if (streak === 3) {
+        score += 100;
+
+        return {
+          icon: "👑",
+          title: "Champion Crown!",
+          message:
+            "Three correct answers in a row! You earned a Champion Crown and 100 bonus points!"
+        };
+      }
+
+      return reward;
+    }
+
+    function useHint() {
+      if (hints <= 0 || answered || hintUsedThisQuestion) return;
+
+      const item = quiz[currentQuestion];
+      const answerButtons = [...document.querySelectorAll(".answer")];
+
+      const wrongIndexes = [];
+
+      item.answers.forEach((answer, index) => {
+        if (index !== item.correct) {
+          wrongIndexes.push(index);
+        }
+      });
+
+      wrongIndexes.sort(() => Math.random() - 0.5);
+
+      for (let i = 0; i < 2; i++) {
+        answerButtons[wrongIndexes[i]].classList.add("hidden-by-hint");
+        answerButtons[wrongIndexes[i]].disabled = true;
+      }
+
+      hints--;
+      hintUsedThisQuestion = true;
+
+      feedback.className = "feedback-powerup";
+      feedback.textContent = "Helper Hint used! Two wrong answers disappeared. 🔍";
+
+      updateDashboard();
+    }
+
+    function showPowerUpPopup(reward) {
+      document.getElementById("popupIcon").textContent = reward.icon;
+      document.getElementById("popupTitle").textContent = reward.title;
+      document.getElementById("popupMessage").textContent = reward.message;
+
+      document.getElementById("powerupPopup").style.display = "flex";
+      updateDashboard();
+    }
+
+    function closePowerUpPopup() {
+      document.getElementById("powerupPopup").style.display = "none";
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      loadQuestion();
+    }
+
+    function showFinishScreen() {
+      gameScreen.style.display = "none";
+      finishScreen.style.display = "block";
+
+      let message = "";
+
+      if (stars === quiz.length) {
+        message =
+          `Perfect adventure! You earned all ${stars} stars and scored ${score} points!`;
+      } else if (stars >= 7) {
+        message =
+          `Fantastic work! You earned ${stars} stars and scored ${score} points!`;
+      } else {
+        message =
+          `Great job exploring God's Word! You earned ${stars} stars and scored ${score} points!`;
+      }
+
+      document.getElementById("finalMessage").textContent = message;
+      launchConfetti();
+    }
+
+    function launchConfetti() {
+      const celebration = document.getElementById("celebration");
+      const icons = ["🎉", "⭐", "✨", "🌈", "🚀", "📖"];
+
+      for (let i = 0; i < 28; i++) {
+        const piece = document.createElement("span");
+
+        piece.className = "confetti";
+        piece.textContent = icons[Math.floor(Math.random() * icons.length)];
+        piece.style.left = `${Math.random() * 100}%`;
+        piece.style.animationDelay = `${Math.random() * .5}s`;
+        piece.style.fontSize = `${1.2 + Math.random() * 1.4}rem`;
+
+        celebration.appendChild(piece);
+
+        setTimeout(() => {
+          piece.remove();
+        }, 2600);
+      }
+    }
+
+    function resetGame() {
+      currentQuestion = 0;
+      score = 0;
+      stars = 0;
+      streak = 0;
+      hints = 0;
+      shields = 0;
+      rainbows = 0;
+      rockets = 0;
+      answered = false;
+      hintUsedThisQuestion = false;
+
+      finishScreen.style.display = "none";
+      gameScreen.style.display = "block";
+
+      loadQuestion();
+    }
+
+    // Start Game
+    document.getElementById("startBtn").addEventListener("click", () => {
+      startScreen.style.display = "none";
+      gameScreen.style.display = "block";
+      loadQuestion();
+    });
+
+    // Use a Helper Hint
+    hintBtn.addEventListener("click", useHint);
+
+    // Continue to next question
+    continueBtn.addEventListener("click", nextQuestion);
+
+    // Close Power-Up pop-up
+    document.getElementById("closePopupBtn").addEventListener("click", closePowerUpPopup);
+
+    // Play Again
+    document.getElementById("playAgainBtn").addEventListener("click", resetGame);
+
+    // Read question and answers aloud
+    document.getElementById("readBtn").addEventListener("click", () => {
+      if (!("speechSynthesis" in window)) return;
+
+      window.speechSynthesis.cancel();
+
+      const item = quiz[currentQuestion];
+      const answerWords = item.answers
+        .map((answer, index) => {
+          const letter = String.fromCharCode(65 + index);
+          return `${letter}. ${answer}`;
+        })
+        .join(". ");
+
+      const speech = new SpeechSynthesisUtterance(
+        `${item.question}. ${answerWords}`
+      );
+
+      speech.rate = 0.82;
+      speech.pitch = 1.08;
+
+      window.speechSynthesis.speak(speech);
+    });
+
+    // Background Music
+    document.getElementById("musicBtn").addEventListener("click", () => {
+      const musicBtn = document.getElementById("musicBtn");
+
+      if (musicOn) {
+        bgMusic.pause();
+        musicOn = false;
+        musicBtn.textContent = "🔊 Play Music";
+      } else {
+        bgMusic.play()
+          .then(() => {
+            musicOn = true;
+            musicBtn.textContent = "🔇 Stop Music";
+          })
+          .catch(() => {
+            musicBtn.textContent = "Music Unavailable";
+          });
+      }
+    });
+  </script>
+</body>
+</html>
